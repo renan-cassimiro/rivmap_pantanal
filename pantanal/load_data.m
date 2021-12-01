@@ -2,7 +2,7 @@ RivMAP_path = 'C:\Users\renan\Unifesp\Iniciação Científica\ESTIMATIVA DA CONC
 cd(RivMAP_path)
 
 from = 1990;
-to = 2010;
+to = 1996;
 
 
 for year = from:to
