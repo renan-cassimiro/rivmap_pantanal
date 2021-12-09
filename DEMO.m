@@ -1,5 +1,5 @@
-%% rivmapsao_lourencoMAP Demo - This demo is a walkthrough demonstrating many of the
-% functions included in the rivmapsao_lourencoMAP toolbox. The demo is best experienced by
+%% rivmapcuiaba_menorMAP Demo - This demo is a walkthrough demonstrating many of the
+% functions included in the rivmapcuiaba_menorMAP toolbox. The demo is best experienced by
 % running blocks of code at a time by highlighting the lines to run and
 % either pressing F9 or right-clicking and choosing "Evaluate Selection."
 % A supplemental .docx file is also provided to show results and provide
@@ -13,25 +13,25 @@
 % xl = [706 2050];
 % yl = [1715 3537];
 % The entire R6 box is not provided in this demo. You must change the path
-% to the rivMAP folder you downloaded.
-RivMAP_path = 'C:\Users\renan\Unifesp\Iniciação Científica\ESTIMATIVA DA CONCENTRAÇÃO DE SEDIMENTOS EM SUSPENSÃO NA BACIA HIDROGRÁFICA DO RIO TAQUARIMS\rivmap_pantanal';
-cd(RivMAP_path)
+% to the rivmapcuiaba_menorMAP folder you downloaded.
+rivmapcuiaba_menorMAP_path = 'C:\Users\renan\Unifesp\Iniciação Científica\ESTIMATIVA DA CONCENTRAÇÃO DE SEDIMENTOS EM SUSPENSÃO NA BACIA HIDROGRÁFICA DO RIO TAQUARIMS\rivmap_pantanal\pantanal';
+cd(rivmapcuiaba_menorMAP_path)
 
-load('pantanal/rivmapsao_lourenco.mat')
+load('rivmapcuiaba_menor.mat')
 
 % Clear the workspace
-close all; clearvars -except rivmapsao_lourenco; clc;
+close all; clearvars -except rivmapcuiaba_menor; clc;
 
 % Turn off image size plotting warning
 warning('off','images:initSize:adjustingMag');
 
-% Data are stored in a structure called 'rivmapsao_lourenco.' There are currently two
-% substructures in rivmapsao_lourenco: 'meta' and 'im.' meta contains the year, exit
+% Data are stored in a structure called 'rivmapcuiaba_menor.' There are currently two
+% substructures in rivmapcuiaba_menor: 'meta' and 'im.' meta contains the year, exit
 % sides, and nominal channel width of the channel. Run the following lines
 % to see what these values are for 1984.
-disp(['Exit sides are ',num2str(rivmapsao_lourenco(1).meta.exit_sides),'.']);
-disp(['Year is ',num2str(rivmapsao_lourenco(1).meta.year),'.']);
-disp(['Nominal channel width is ',num2str(rivmapsao_lourenco(1).meta.Wn),'.']);
+disp(['Exit sides are ',num2str(rivmapcuiaba_menor(1).meta.exit_sides),'.']);
+disp(['Year is ',num2str(rivmapcuiaba_menor(1).meta.year),'.']);
+disp(['Nominal channel width is ',num2str(rivmapcuiaba_menor(1).meta.Wn),'.']);
 
 % In the 'im' substructure, there are two binary channel masks: 'hc'
 % (hydraulically-connected) and 'st' (single-thread). The 'st' images were
@@ -42,10 +42,10 @@ disp(['Nominal channel width is ',num2str(rivmapsao_lourenco(1).meta.Wn),'.']);
 % Let's look at the 32 years of hydraulically-connected channel mask stored
 % in the 'im.hc' substructure.
 close all
-for i = 1:numel(rivmapsao_lourenco)
-    I = rivmapsao_lourenco(i).im.st;
+for i = 1:numel(rivmapcuiaba_menor)
+    I = rivmapcuiaba_menor(i).im.st;
     imshow(I)
-    title(rivmapsao_lourenco(i).meta.year)
+    title(rivmapcuiaba_menor(i).meta.year)
     pause(0.1)
 end
 
@@ -55,11 +55,11 @@ end
 i = 1; % We will analyze the first element in the structure (can change i if you want to analyze a different year)
 plotornot = 1; % We want to plot our results
 
-% Load the variables we need from the rivmapsao_lourenco structure
-Wn = rivmapsao_lourenco(i).meta.Wn; % nominal width
-Ist = rivmapsao_lourenco(i).im.st; % single-thread channel mask
-Ihc = rivmapsao_lourenco(i).im.hc; % hydraulically-connected channel mask
-es = rivmapsao_lourenco(i).meta.exit_sides; % exit sides
+% Load the variables we need from the rivmapcuiaba_menor structure
+Wn = rivmapcuiaba_menor(i).meta.Wn; % nominal width
+Ist = rivmapcuiaba_menor(i).im.st; % single-thread channel mask
+Ihc = rivmapcuiaba_menor(i).im.hc; % hydraulically-connected channel mask
+es = rivmapcuiaba_menor(i).meta.exit_sides; % exit sides
 
 %% 3a. Compute the centerline
 close all
@@ -114,7 +114,7 @@ ylim([-0.2 0.2])
 xlabel('streamwise distance, pixels'); ylabel('curvature, pixels^-^1')
 
 % Two things of note: (1) Curvature is quite noisy. This is typical when
-% estimating second-derivmapsao_lourencoative quantities. For smoother curvatures, the
+% estimating second-derivmapcuiaba_menorative quantities. For smoother curvatures, the
 % centerline could be smoothed mulitple times and/or with a larger window.
 % (2) The ends of both signals are somewhat noisy--this is an artifact of
 % how the savfilt smoother handles end cases. 
@@ -131,21 +131,21 @@ Wavg
 
 %% 4. Process all years
 % If you want to skip this processing, you can load in the variable
-% 'rivmapsao_lourenco_processed' contained in the rivmapsao_lourencoMAP demo folder.
+% 'rivmapcuiaba_menor_processed' contained in the rivmapcuiaba_menorMAP demo folder.
 plotornot = 0; % Don't plot
-for i = 1:numel(rivmapsao_lourenco)
+for i = 1:numel(rivmapcuiaba_menor)
     
     % Load variables
-    Wn = rivmapsao_lourenco(i).meta.Wn;
-    I = rivmapsao_lourenco(i).im.st;
-    es = rivmapsao_lourenco(i).meta.exit_sides;
+    Wn = rivmapcuiaba_menor(i).meta.Wn;
+    I = rivmapcuiaba_menor(i).im.st;
+    es = rivmapcuiaba_menor(i).meta.exit_sides;
 
     % Centerline
     [cl, Icl] = centerline_from_mask(I,es,Wn,plotornot);
     cls = savfilt(cl,Wn);
 
     % Banklines
-    banks = banklines_from_mask(I, rivmapsao_lourenco(i).meta.exit_sides, plotornot);
+    banks = banklines_from_mask(I, rivmapcuiaba_menor(i).meta.exit_sides, plotornot);
     lb = banks{1}; 
     rb = banks{2};
     
@@ -171,35 +171,35 @@ for i = 1:numel(rivmapsao_lourenco)
 
     % Save variables - we create a new substructure called 'vec' to store
     % vector-based variables
-    rivmapsao_lourenco(i).vec.cl = cl;
-    rivmapsao_lourenco(i).vec.cls = cls;
-    rivmapsao_lourenco(i).vec.lb = lb;
-    rivmapsao_lourenco(i).vec.lbs = lbs;
-    rivmapsao_lourenco(i).vec.rb = rb;
-    rivmapsao_lourenco(i).vec.rbs = rbs;
+    rivmapcuiaba_menor(i).vec.cl = cl;
+    rivmapcuiaba_menor(i).vec.cls = cls;
+    rivmapcuiaba_menor(i).vec.lb = lb;
+    rivmapcuiaba_menor(i).vec.lbs = lbs;
+    rivmapcuiaba_menor(i).vec.rb = rb;
+    rivmapcuiaba_menor(i).vec.rbs = rbs;
 
-    rivmapsao_lourenco(i).vec.W = W;
-    rivmapsao_lourenco(i).vec.Wavg = Wavg; % Average of pointwise widths
-    rivmapsao_lourenco(i).vec.Wra = Wra; % Reach average width
-    rivmapsao_lourenco(i).vec.S = S;
-    rivmapsao_lourenco(i).vec.A = A;
-    rivmapsao_lourenco(i).vec.C = C;
-    rivmapsao_lourenco(i).vec.cl_len = S(end); % Total centerline length
+    rivmapcuiaba_menor(i).vec.W = W;
+    rivmapcuiaba_menor(i).vec.Wavg = Wavg; % Average of pointwise widths
+    rivmapcuiaba_menor(i).vec.Wra = Wra; % Reach average width
+    rivmapcuiaba_menor(i).vec.S = S;
+    rivmapcuiaba_menor(i).vec.A = A;
+    rivmapcuiaba_menor(i).vec.C = C;
+    rivmapcuiaba_menor(i).vec.cl_len = S(end); % Total centerline length
 
-    rivmapsao_lourenco(i).im.cl = Icl; % Store the image of the centerline also
+    rivmapcuiaba_menor(i).im.cl = Icl; % Store the image of the centerline also
 
-    disp(['Year ',num2str(i),'/',num2str(numel(rivmapsao_lourenco)),' is finished.'])
+    disp(['Year ',num2str(i),'/',num2str(numel(rivmapcuiaba_menor)),' is finished.'])
 end
-save('rivmapsao_lourenco','rivmapsao_lourenco')
+save('rivmapcuiaba_menor','rivmapcuiaba_menor')
 
 %% 5. Plot all years
 close all
-for i = 1:numel(rivmapsao_lourenco)
-    imshow(rivmapsao_lourenco(i).im.st); hold on
-    plot(rivmapsao_lourenco(i).vec.cls(:,1),rivmapsao_lourenco(i).vec.cls(:,2),'b','linewidth',1.5);
-    plot(rivmapsao_lourenco(i).vec.lb(:,1),rivmapsao_lourenco(i).vec.lb(:,2),'m','linewidth',1.5)
-    plot(rivmapsao_lourenco(i).vec.rb(:,1),rivmapsao_lourenco(i).vec.rb(:,2),'m','linewidth',1.5)
-    title(rivmapsao_lourenco(i).meta.year)
+for i = 1:numel(rivmapcuiaba_menor)
+    imshow(rivmapcuiaba_menor(i).im.st); hold on
+    plot(rivmapcuiaba_menor(i).vec.cls(:,1),rivmapcuiaba_menor(i).vec.cls(:,2),'b','linewidth',1.5);
+    plot(rivmapcuiaba_menor(i).vec.lb(:,1),rivmapcuiaba_menor(i).vec.lb(:,2),'m','linewidth',1.5)
+    plot(rivmapcuiaba_menor(i).vec.rb(:,1),rivmapcuiaba_menor(i).vec.rb(:,2),'m','linewidth',1.5)
+    title(rivmapcuiaba_menor(i).meta.year)
     pause(0.2)
 end
 
@@ -209,9 +209,9 @@ end
 % ordinary plotting the origin is at the bottom-left. E.g.
 
 % close all
-% plot(rivmapsao_lourenco(1).vec.cls(:,1),-rivmapsao_lourenco(1).vec.cls(:,2),'b','linewidth',1.5); axis equal; hold on
-% plot(rivmapsao_lourenco(1).vec.lb(:,1),-rivmapsao_lourenco(1).vec.lb(:,2),'m','linewidth',1.5)
-% plot(rivmapsao_lourenco(1).vec.rb(:,1),-rivmapsao_lourenco(1).vec.rb(:,2),'m','linewidth',1.5)
+% plot(rivmapcuiaba_menor(1).vec.cls(:,1),-rivmapcuiaba_menor(1).vec.cls(:,2),'b','linewidth',1.5); axis equal; hold on
+% plot(rivmapcuiaba_menor(1).vec.lb(:,1),-rivmapcuiaba_menor(1).vec.lb(:,2),'m','linewidth',1.5)
+% plot(rivmapcuiaba_menor(1).vec.rb(:,1),-rivmapcuiaba_menor(1).vec.rb(:,2),'m','linewidth',1.5)
 
 
 %% 6. Compute migrations
@@ -221,65 +221,65 @@ end
 % 'mig.' This substructure contains two sub-substructures: (1) 'cl' is used
 % to store results related to centerline migrations, and (2) 'mask' stores
 % results from mask differencing (erosion/accretion).
-for i = 1:numel(rivmapsao_lourenco)-1 %
+for i = 1:numel(rivmapcuiaba_menor)-1 %
     
     % Find index of next time step (for cases where data is missing from a
     % year)
-    for jj = (i+1):numel(rivmapsao_lourenco)
-        if isempty(rivmapsao_lourenco(jj).vec) == 0
+    for jj = (i+1):numel(rivmapcuiaba_menor)
+        if isempty(rivmapcuiaba_menor(jj).vec) == 0
             i2 = jj;
             break
         end
     end
     
     % Compute centerline migration areas and find cutoffs
-    cl1 = rivmapsao_lourenco(i).vec.cls; % We are using the smooth centerlines but can also use unsmoothed
-    cl2 = rivmapsao_lourenco(i2).vec.cls;
-    es1 = rivmapsao_lourenco(i).meta.exit_sides;
-    es2 = rivmapsao_lourenco(i2).meta.exit_sides;
-    sizeI = size(rivmapsao_lourenco(i).im.cl);
+    cl1 = rivmapcuiaba_menor(i).vec.cls; % We are using the smooth centerlines but can also use unsmoothed
+    cl2 = rivmapcuiaba_menor(i2).vec.cls;
+    es1 = rivmapcuiaba_menor(i).meta.exit_sides;
+    es2 = rivmapcuiaba_menor(i2).meta.exit_sides;
+    sizeI = size(rivmapcuiaba_menor(i).im.cl);
     [Imig,Icutsall,cutidcs,cutarea,cutlen,chutelen] = migration_cl(cl1, cl2, es1, es2, Wn, sizeI);
     % Compute erosion/accretion areas and associated cutoffs
-    I1 = rivmapsao_lourenco(i).im.st;
-    I2 = rivmapsao_lourenco(i2).im.st;
+    I1 = rivmapcuiaba_menor(i).im.st;
+    I2 = rivmapcuiaba_menor(i2).im.st;
     [Ie,Ia,Inc,Icutsm] = migration_mask(I1,I2,Wn);
     
     % Store results
-    rivmapsao_lourenco(i).mig.cl.Imig = Imig;
-    rivmapsao_lourenco(i).mig.cl.Icuts = Icutsall;
-    rivmapsao_lourenco(i).mig.cl.cutidcs = cutidcs;
-    rivmapsao_lourenco(i).mig.cl.cutareas = cutarea;
-    rivmapsao_lourenco(i).mig.cl.cutlen = cutlen;
-    rivmapsao_lourenco(i).mig.cl.chutelen = chutelen;
+    rivmapcuiaba_menor(i).mig.cl.Imig = Imig;
+    rivmapcuiaba_menor(i).mig.cl.Icuts = Icutsall;
+    rivmapcuiaba_menor(i).mig.cl.cutidcs = cutidcs;
+    rivmapcuiaba_menor(i).mig.cl.cutareas = cutarea;
+    rivmapcuiaba_menor(i).mig.cl.cutlen = cutlen;
+    rivmapcuiaba_menor(i).mig.cl.chutelen = chutelen;
 
     
-    rivmapsao_lourenco(i).mig.mask.Ie = Ie;
-    rivmapsao_lourenco(i).mig.mask.Ia = Ia;
-    rivmapsao_lourenco(i).mig.mask.Inc = Inc;
-    rivmapsao_lourenco(i).mig.mask.Icuts = Icutsm;
+    rivmapcuiaba_menor(i).mig.mask.Ie = Ie;
+    rivmapcuiaba_menor(i).mig.mask.Ia = Ia;
+    rivmapcuiaba_menor(i).mig.mask.Inc = Inc;
+    rivmapcuiaba_menor(i).mig.mask.Icuts = Icutsm;
     
-    disp(['Year ',num2str(i),'/',num2str(numel(rivmapsao_lourenco)-1),' is finished.'])
+    disp(['Year ',num2str(i),'/',num2str(numel(rivmapcuiaba_menor)-1),' is finished.'])
 end
-save('rivmapsao_lourenco','rivmapsao_lourenco')
+save('rivmapcuiaba_menor','rivmapcuiaba_menor')
 
 %% 7. Plot migration maps
 
 % At this point, we have computed all the planform changes supported by 
-% rivmapsao_lourencoMAP. Now we will look at some results.
+% rivmapcuiaba_menorMAP. Now we will look at some results.
 
 % First, let's look at the total migrated area across all times. We will
 % initialize a blank image, loop through all the migrated images and mark
 % each migrated pixel as true (1) in the blank image.
-Imig = false(size(rivmapsao_lourenco(1).im.st)); % initialize image
-Ie = false(size(rivmapsao_lourenco(1).im.st)); % initialize image
-Ia = false(size(rivmapsao_lourenco(1).im.st)); % initialize image
-Icuts = false(size(rivmapsao_lourenco(1).im.st)); % initialize image
-for i = 1:numel(rivmapsao_lourenco)-1
-    Imig(rivmapsao_lourenco(i).mig.cl.Imig) = true;
-    Ie(rivmapsao_lourenco(i).mig.mask.Ie) = true;
-    Ia(rivmapsao_lourenco(i).mig.mask.Ia) = true;
-    Icuts(rivmapsao_lourenco(i).mig.cl.Icuts) = true;
-    yrs(i) = rivmapsao_lourenco(i).meta.year;
+Imig = false(size(rivmapcuiaba_menor(1).im.st)); % initialize image
+Ie = false(size(rivmapcuiaba_menor(1).im.st)); % initialize image
+Ia = false(size(rivmapcuiaba_menor(1).im.st)); % initialize image
+Icuts = false(size(rivmapcuiaba_menor(1).im.st)); % initialize image
+for i = 1:numel(rivmapcuiaba_menor)-1
+    Imig(rivmapcuiaba_menor(i).mig.cl.Imig) = true;
+    Ie(rivmapcuiaba_menor(i).mig.mask.Ie) = true;
+    Ia(rivmapcuiaba_menor(i).mig.mask.Ia) = true;
+    Icuts(rivmapcuiaba_menor(i).mig.cl.Icuts) = true;
+    yrs(i) = rivmapcuiaba_menor(i).meta.year;
 end
 
 % Centerline migrated area map
@@ -289,16 +289,16 @@ subimage(Imig)
 title('Migrated area (cl)','fontsize',16)
 
 % We can also plot the areas colored as a function of time
-Imigc = zeros(size(rivmapsao_lourenco(1).im.st)); % initialize image (use zeros instead of false so that we can store non-binary numbers)
-for i = 1:numel(rivmapsao_lourenco)-1
-    Imigc(rivmapsao_lourenco(i).mig.cl.Imig) = i;
-    yrs(i) = rivmapsao_lourenco(i).meta.year;
+Imigc = zeros(size(rivmapcuiaba_menor(1).im.st)); % initialize image (use zeros instead of false so that we can store non-binary numbers)
+for i = 1:numel(rivmapcuiaba_menor)-1
+    Imigc(rivmapcuiaba_menor(i).mig.cl.Imig) = i;
+    yrs(i) = rivmapcuiaba_menor(i).meta.year;
 end
 subplot(1,3,2)
-cmap = colormap(parula(numel(rivmapsao_lourenco)));
+cmap = colormap(parula(numel(rivmapcuiaba_menor)));
 subimage(Imigc, cmap);
 cb = colorbar;
-ytix = [2:5:30]/(numel(rivmapsao_lourenco)-1);
+ytix = [2:5:30]/(numel(rivmapcuiaba_menor)-1);
 ytixl = yrs(2:5:30);
 set(cb,'ytick',ytix,'yticklabel',ytixl)
 title('Migrated area, colored by year','fontsize',16)
@@ -317,15 +317,15 @@ subimage(Icuts) % It appears that five cutoffs have occurred
 title('Binary map of cutoffs','fontsize',16)
 
 % Let's plot the cutoffs again, but color them according to year
-Icutc = zeros(size(rivmapsao_lourenco(1).im.st)); % initialize image (use zeros instead of false so that we can store non-binary numbers)
-for i = 1:numel(rivmapsao_lourenco)-1
-    Icutc(rivmapsao_lourenco(i).mig.cl.Icuts) = i;
-    yrs(i) = rivmapsao_lourenco(i).meta.year;
+Icutc = zeros(size(rivmapcuiaba_menor(1).im.st)); % initialize image (use zeros instead of false so that we can store non-binary numbers)
+for i = 1:numel(rivmapcuiaba_menor)-1
+    Icutc(rivmapcuiaba_menor(i).mig.cl.Icuts) = i;
+    yrs(i) = rivmapcuiaba_menor(i).meta.year;
 end
 subplot(1,3,2);
 subimage(Icutc,cmap)
 cb = colorbar;
-ytix = [2:5:30]/(numel(rivmapsao_lourenco)-1);
+ytix = [2:5:30]/(numel(rivmapcuiaba_menor)-1);
 ytixl = yrs(2:5:30);
 set(cb,'ytick',ytix,'yticklabel',ytixl)
 title('Migrated area, colored by year','fontsize',16)
@@ -333,10 +333,10 @@ title('Cutoffs colored by year','fontsize',16)
 
 % Now it appears there were six cutoffs. Let's plot cutoff areas in time to
 % make sure.
-for i = 1:numel(rivmapsao_lourenco)-1
-    n = numel(rivmapsao_lourenco(i).mig.cl.cutareas);
+for i = 1:numel(rivmapcuiaba_menor)-1
+    n = numel(rivmapcuiaba_menor(i).mig.cl.cutareas);
     if n > 0
-        cutareas(i,:) = rivmapsao_lourenco(i).mig.cl.cutareas;
+        cutareas(i,:) = rivmapcuiaba_menor(i).mig.cl.cutareas;
     end    
 end
 subplot(1,3,3)
@@ -354,13 +354,13 @@ set(gcf, 'Position', get(0,'Screensize')-[-45 -30 120 120]); % Maximize figure s
 
 % Let's start by computing the average migration rate for the entire reach
 % across all time. Average migration rate is computed as the migrated area
-% divided by the centerline length--we have both stored in our rivmapsao_lourenco 
+% divided by the centerline length--we have both stored in our rivmapcuiaba_menor 
 % structure.
-for i = 1:numel(rivmapsao_lourenco)-1
-    MAcl(i) = sum(sum(rivmapsao_lourenco(i).mig.cl.Imig));
-    MAe(i) = sum(sum(rivmapsao_lourenco(i).mig.mask.Ie));
-    MAa(i) = sum(sum(rivmapsao_lourenco(i).mig.mask.Ia));
-    len(i) = rivmapsao_lourenco(i).vec.cl_len;
+for i = 1:numel(rivmapcuiaba_menor)-1
+    MAcl(i) = sum(sum(rivmapcuiaba_menor(i).mig.cl.Imig));
+    MAe(i) = sum(sum(rivmapcuiaba_menor(i).mig.mask.Ie));
+    MAa(i) = sum(sum(rivmapcuiaba_menor(i).mig.mask.Ia));
+    len(i) = rivmapcuiaba_menor(i).vec.cl_len;
 end
 Mrcl = MAcl./len;
 Mre = MAe./len;
@@ -381,25 +381,25 @@ set(gca,'fontsize',16)
 % meander-belt centerline and averaging migrations through time along this
 % centerline. 
 
-% The rivmapsao_lourencoMAP function spatial_migration will compute a meander belt that
+% The rivmapcuiaba_menorMAP function spatial_migration will compute a meander belt that
 % encompasses all the migrated area, as well as a centerline of the meander
 % belt. It returns the average migration rate along the meander belt
 % centerline. We need to feed it a binary image of all channel positions
 % along with the image of all migrations over the time period, and a cell
 % containing all the centerline images.
 clear Icp Icl Imig Ie Ia
-for i = 1:numel(rivmapsao_lourenco)
-    Icp{i} = rivmapsao_lourenco(i).im.st;
-    Icl{i} = rivmapsao_lourenco(i).im.cl;
+for i = 1:numel(rivmapcuiaba_menor)
+    Icp{i} = rivmapcuiaba_menor(i).im.st;
+    Icl{i} = rivmapcuiaba_menor(i).im.cl;
 end
-for i = 1:numel(rivmapsao_lourenco)-1
-   Imig{i} = rivmapsao_lourenco(i).mig.cl.Imig;
-   Ie{i} = rivmapsao_lourenco(i).mig.mask.Ie;
-   Ia{i} = rivmapsao_lourenco(i).mig.mask.Ia;
+for i = 1:numel(rivmapcuiaba_menor)-1
+   Imig{i} = rivmapcuiaba_menor(i).mig.cl.Imig;
+   Ie{i} = rivmapcuiaba_menor(i).mig.mask.Ie;
+   Ia{i} = rivmapcuiaba_menor(i).mig.mask.Ia;
 end
 
-Wn = rivmapsao_lourenco(1).meta.Wn;
-es = rivmapsao_lourenco(1).meta.exit_sides;
+Wn = rivmapcuiaba_menor(1).meta.Wn;
+es = rivmapcuiaba_menor(1).meta.exit_sides;
 spacing = 2.1*Wn; % we'll compute migration rates every two channel widths
 plotornot = 0;
 
@@ -417,7 +417,7 @@ AA = Iout{3};
 % To compute annual average migration rates, we divide Atot by lenavg, then 
 % divide by the total number of elapsed years. Multiply by 30 to convert
 % from pixels to meters.
-nyrs = numel(rivmapsao_lourenco)-1; % number of years of migrated area in the Imig image
+nyrs = numel(rivmapcuiaba_menor)-1; % number of years of migrated area in the Imig image
 
 % The variable 'belt' contains the info we need to reconstruct the meander
 % belt boundaries and buffer polygons. Let's see what the segments look 
@@ -494,8 +494,8 @@ xlim([1984 2014])
 % accretion. This indicates channel widening from 1996 onward, so we should
 % see this if we plot average channel width. We will also plot the
 % difference between the cumulative sums of erosion and accrection.
-for i = 1:numel(rivmapsao_lourenco)
-    Wr_avg(i) = rivmapsao_lourenco(i).vec.Wavg;
+for i = 1:numel(rivmapcuiaba_menor)
+    Wr_avg(i) = rivmapcuiaba_menor(i).vec.Wavg;
 end
 subplot(3,1,3)
 [hAx,hLine1,hLine2] = plotyy(yrs,Wr_avg(1:31),yrs,(cumsum(MAe)-cumsum(MAa))*900/10^6);
@@ -553,7 +553,7 @@ set(gca,'fontsize',14)
 % We will focus on the downstream portion of the reach.
 xl = [150 600];
 yl = [14 560];
-I = rivmapsao_lourenco(1).im.st;
+I = rivmapcuiaba_menor(1).im.st;
 Imask = false(size(I));
 Imask(yl(1):yl(2),xl(1):xl(2)) = true;
 Icrop = I & Imask;
@@ -563,21 +563,21 @@ Icrop = I & Imask;
 
 % We can use the migrated images we've already stored. We just need to
 % recompute the centerline length for the subreach so we can calculate
-% migration rates. We will use the rivmapsao_lourenco.im.cl image we already computed to
+% migration rates. We will use the rivmapcuiaba_menor.im.cl image we already computed to
 % find the subreach centerline length.
 clear MAcl MAe MAa
-for i = 1:numel(rivmapsao_lourenco)-1
+for i = 1:numel(rivmapcuiaba_menor)-1
     % First find the subreach centerline length
-    Icl = rivmapsao_lourenco(i).im.cl; % load the centerline image
+    Icl = rivmapcuiaba_menor(i).im.cl; % load the centerline image
     Icl(~Imask) = false; % mask the centerline image
     E = find(bwmorph(Icl,'endpoints')); % find endpoints of the centerline
     D = bwdistgeodesic(Icl,E(1),'quasi'); % compute euclidean distances along centerline from endpoint
     subreach_len(i) = max(max(D)); % centerline length is max of distances (other endpoint)
     
     % Now find migration areas within the subreach
-    Imig2 = rivmapsao_lourenco(i).mig.cl.Imig;
-    Ie = rivmapsao_lourenco(i).mig.mask.Ie;
-    Ia = rivmapsao_lourenco(i).mig.mask.Ia;
+    Imig2 = rivmapcuiaba_menor(i).mig.cl.Imig;
+    Ie = rivmapcuiaba_menor(i).mig.mask.Ie;
+    Ia = rivmapcuiaba_menor(i).mig.mask.Ia;
     MAcl(i) = sum(sum(Imig2(Imask)));
     MAe(i) = sum(sum(Ie(Imask)));
     MAa(i) = sum(sum(Ia(Imask))); 
@@ -602,8 +602,8 @@ title('Migration rate for sub-reach and entire reach')
 % the reach? From our cutoffs-in-time plot, we saw there was a cutoff in
 % 2004. Let's see if it was close to our sub-reach.
 idx = find(yrs==2004);
-Icut2004 = (rivmapsao_lourenco(idx).mig.cl.Icuts);
-I = rivmapsao_lourenco(idx).im.st;
+Icut2004 = (rivmapcuiaba_menor(idx).mig.cl.Icuts);
+I = rivmapcuiaba_menor(idx).im.st;
 Isubreach = I & Imask;
 I2004 = zeros(size(I));
 I2004(I) = 1;
@@ -623,24 +623,24 @@ set(gcf, 'Position', get(0,'Screensize')-[-45 -30 120 120]); % Maximize figure s
 
 %% 12. Combining georeferenced images
 % Load in the a separate dataset that contains imagery from four large
-% boxes of the Ucayali rivmapsao_lourencoer
-load('rivmapsao_lourenco_georeffed')
+% boxes of the Ucayali rivmapcuiaba_menorer
+load('rivmapcuiaba_menor_georeffed')
 clear I G
 % We need to create two cell variables: one contains each of the images we
 % want to combine, and one contains the images' georeferencing info.
 for i = 1:4
     if i == 1
-        I{i} = rivmapsao_lourenco3.im.st;
-        G{i} = rivmapsao_lourenco3.meta.georef;
+        I{i} = rivmapcuiaba_menor3.im.st;
+        G{i} = rivmapcuiaba_menor3.meta.georef;
     elseif i == 2
-        I{i} = rivmapsao_lourenco4.im.st;
-        G{i} = rivmapsao_lourenco4.meta.georef;
+        I{i} = rivmapcuiaba_menor4.im.st;
+        G{i} = rivmapcuiaba_menor4.meta.georef;
     elseif i == 3
-        I{i} = rivmapsao_lourenco5.im.st;
-        G{i} = rivmapsao_lourenco5.meta.georef;
+        I{i} = rivmapcuiaba_menor5.im.st;
+        G{i} = rivmapcuiaba_menor5.meta.georef;
     elseif i == 4
-        I{i} = rivmapsao_lourenco6.im.st;
-        G{i} = rivmapsao_lourenco6.meta.georef;
+        I{i} = rivmapcuiaba_menor6.im.st;
+        G{i} = rivmapcuiaba_menor6.meta.georef;
     end
 end
 % Stitch them together
@@ -671,17 +671,17 @@ title('All')
 clear I G
 for i = 1:4
     if i == 1
-        I{i} = rivmapsao_lourenco3.vec.cls;
-        G{i} = rivmapsao_lourenco3.meta.georef;
+        I{i} = rivmapcuiaba_menor3.vec.cls;
+        G{i} = rivmapcuiaba_menor3.meta.georef;
     elseif i == 2
-        I{i} = rivmapsao_lourenco4.vec.cls;
-        G{i} = rivmapsao_lourenco4.meta.georef;
+        I{i} = rivmapcuiaba_menor4.vec.cls;
+        G{i} = rivmapcuiaba_menor4.meta.georef;
     elseif i == 3
-        I{i} = rivmapsao_lourenco5.vec.cls;
-        G{i} = rivmapsao_lourenco5.meta.georef;
+        I{i} = rivmapcuiaba_menor5.vec.cls;
+        G{i} = rivmapcuiaba_menor5.meta.georef;
     elseif i == 4
-        I{i} = rivmapsao_lourenco6.vec.cls;
-        G{i} = rivmapsao_lourenco6.meta.georef;
+        I{i} = rivmapcuiaba_menor6.vec.cls;
+        G{i} = rivmapcuiaba_menor6.meta.georef;
     end
 end
 [cl_out,Georef_out] = combine_georeffed_images(I,G);

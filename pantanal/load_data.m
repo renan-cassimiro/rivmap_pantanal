@@ -8,20 +8,21 @@ to = 2021;
 for year = from:to
     index = year-from + 1;
 
-    img_name= strcat('rivmapsao_lourenco/sao_lourenco_active_channel_binary_mask_', string(year), '.tif');
+    img_name= strcat('rivmapcuiaba_menor/cuiaba_menor_active_channel_binary_mask_', string(year), '.tif');
     img_number = imread(img_name);
     img = logical(img_number);
     
-    rivmapsao_lourenco(index).meta.year = year
-    rivmapsao_lourenco(index).meta.exit_sides = 'NS';
-    rivmapsao_lourenco(index).meta.Wn = 30;
+    meta = struct();
+    meta.year = year;
+    meta.exit_sides = 'EW';
+    meta.Wn = 10;
+    rivmapcuiaba_menor(index).meta = meta;
     
-    rivmapsao_lourenco(index).im = struct();
-    rivmapsao_lourenco(index).im.st = img;
-    rivmapsao_lourenco(index).im.hc = img;
-    
-    disp(rivmapsao_lourenco)
-    
+    im = struct();
+    im.st = img;
+    im.hc = img;
+    rivmapcuiaba_menor(index).im = im;
+     
 end
 
-save('rivmapsao_lourenco')
+save('rivmapcuiaba_menor');
